@@ -64,10 +64,5 @@ exports.signup = async function (req, res, next) {
       status: 400,
       message: err.message
     })
-    // see what kind of error
-    // if it is a certain error
-    // response with username/email already taken
-    // otherwise just send back a generic 400
-
   }
 }
