@@ -56,13 +56,16 @@ exports.signup = async function (req, res, next) {
       token
     });
   } catch (err) {
+
+    const failedFields = Object.keys(err.errors)
+
     // if a validation fails
     if (err.code === 11000) {
       err.message = "Sorry, that username and/or email is already taken."
     }
     return next({
       status: 400,
-      message: err.message
+      message: "Please fill out all fields. These fields are missing: " + failedFields.join(', '), //err.message
     })
   }
 }
