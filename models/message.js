@@ -1,37 +1,37 @@
-const mongoose = require('mongoose');
-// bring in user model because we want to make every message have a refernce to the user that created it
+const mongoose = require("mongoose");
 const User = require("./user");
 
-const messageSchema = new mongoose.Schema({
-  text: {
-    type: String,
-    required: true,
-    maxLength: 160
+const messageSchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+      maxLength: 160
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
   },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  }
-}, {
+  {
     timestamps: true
-  })
+  }
+);
 
-// pre remove hook
-// find user
-// remove the id of the message form their message lists
-// save that user
-// return next
-messageSchema.pre('remove', async function (next) {
+messageSchema.pre("remove", async function (next) {
   try {
+    // find a user
     let user = await User.findById(this.user);
+    // remove the id of the message from their messages list
     user.message.remove(this.id);
+    // save that user
     await user.save();
+    // return next
     return next();
-
-  } catch (e) {
+  } catch (err) {
     return next(err);
   }
-})
+});
 
 const Message = mongoose.model("Message", messageSchema);
 module.exports = Message;
